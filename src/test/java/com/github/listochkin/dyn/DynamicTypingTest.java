@@ -1,9 +1,14 @@
 package com.github.listochkin.dyn;
 
+import static com.github.listochkin.dyn.DynamicTyping.cast;
 import static com.github.listochkin.dyn.DynamicTyping.isOfType;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import com.github.listochkin.dyn.fixtures.CanFly;
+import com.github.listochkin.dyn.fixtures.CanQuack;
+import com.github.listochkin.dyn.fixtures.Duck;
 
 public class DynamicTypingTest {
 
@@ -21,6 +26,19 @@ public class DynamicTypingTest {
 
         assertTrue("Should be true for interface name",
                 isOfType(Integer.valueOf(1), "java.lang.Number"));
+    }
+
+    @Test
+    public void testCast() {
+        final Duck duck = new Duck();
+        assertTrue(duck.fly() && duck.quack());
+
+        final CanFly proxy = cast(duck, CanFly.class,
+                CanQuack.class);
+        assertTrue(proxy.fly());
+
+        final CanQuack casted = (CanQuack) proxy;
+        assertTrue(casted.quack());
     }
 
 }
