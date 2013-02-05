@@ -63,11 +63,15 @@ public class DynamicTyping {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T patch(final T target, final Object patch) {
+        return patch(target, patch, target.getClass().getInterfaces());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T patch(final T target, final Object patch,
+            final Class<?>... interfaces) {
         return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(),
-                target.getClass().getInterfaces(), new PatchedHandler(target,
-                        patch));
+                interfaces, new PatchedHandler(target, patch));
     }
 
     private static <T> T[] concat(final T first, final T[] rest) {

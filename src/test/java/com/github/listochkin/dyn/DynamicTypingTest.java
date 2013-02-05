@@ -52,4 +52,33 @@ public class DynamicTypingTest {
         assertFalse(patched.fly());
     }
 
+    @Test
+    public void testCastPatched() {
+        final CanFly patched = (CanFly) patch(
+                new Duck(), new Patch(), CanFly.class);
+        final CanFly casted = cast(patched,
+                CanFly.class);
+        assertFalse(casted.fly());
+    }
+
+    @Test
+    public void testPatchCasted() {
+        final CanFly casted = cast(new Duck(),
+                CanFly.class);
+        final CanFly patched = patch(casted, new Patch(),
+                CanFly.class);
+        assertFalse(patched.fly());
+    }
+
+    @Test
+    public void testPatchDynamicMultiType() {
+        final CanFly casted = cast(new Duck(),
+                CanFly.class, CanQuack.class);
+        assertTrue(((CanQuack) casted).quack());
+
+        final CanFly patched = patch(casted, new Patch(),
+                CanFly.class, CanQuack.class);
+        assertFalse(patched.fly());
+        assertTrue(CanQuack.class.cast(patched).quack());
+    }
 }
