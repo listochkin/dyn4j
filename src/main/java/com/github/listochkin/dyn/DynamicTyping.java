@@ -37,6 +37,39 @@ public class DynamicTyping {
                 concat(type, additionalInterfaces), new ProxyHandler(target)));
     }
 
+    private static final class PatchedHandler implements InvocationHandler {
+        private final Object target;
+        private final Object patch;
+
+        private PatchedHandler(final Object target, final Object patch) {
+            this.target = target;
+            this.patch = patch;
+        }
+
+        @Override
+        public Object invoke(final Object proxy, final Method method,
+                final Object[] params) throws Throwable {
+            try {
+                return patch
+                        .getClass()
+                        .getMethod(method.getName(), method.getParameterTypes())
+                        .invoke(patch, params);
+            } catch (final NoSuchMethodException e) {
+                return target
+                        .getClass()
+                        .getMethod(method.getName(), method.getParameterTypes())
+                        .invoke(target, params);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T patch(final T target, final Object patch) {
+        return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(),
+                target.getClass().getInterfaces(), new PatchedHandler(target,
+                        patch));
+    }
+
     private static <T> T[] concat(final T first, final T[] rest) {
         if (rest == null) {
             @SuppressWarnings("unchecked")
