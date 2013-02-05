@@ -3,6 +3,8 @@ Dyn4j
 
 Simple duck typing for Java.
 
+[![Build Status](https://travis-ci.org/listochkin/dyn4j.png)](https://travis-ci.org/listochkin/dyn4j)
+
 Why dyn4j
 ---------
 
